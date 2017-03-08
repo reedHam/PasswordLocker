@@ -15,11 +15,14 @@ namespace PasswordLocker {
     public partial class PasswordLocker : Form {
         public PasswordLocker() {
             InitializeComponent();
-            this.MaximumSize = new System.Drawing.Size(450, 250);
+            MaximumSize = new System.Drawing.Size(450, 250);
+
             if (File.Exists("Passwords.sqlite") || File.Exists("user.pl")) {
+                this.AcceptButton = login;// sets the button pressed when enter is hit
                 pnlLogin.Visible = true;
                 pnlLogin.Dock = DockStyle.Fill;
             } else {
+                this.AcceptButton = passSubmit;
                 pnlSetup.Visible = true;
                 pnlSetup.Dock = DockStyle.Fill;
             }
@@ -28,20 +31,14 @@ namespace PasswordLocker {
 
         string DBpass;
 
-        private void setup() {
-            
-        }
-
         private void createDB() {
             SQLiteConnection.CreateFile("Passwords.sqlite");
 
-            SQLiteConnection dbConnection;
-
-            dbConnection = new SQLiteConnection("Data Source=Passwords.sqlite;Version=3;Password="+ DBpass + ";");
-
+            SQLiteConnection dbConnection = openDB();
             dbConnection.Open();
-            string site = "CREATE TABLE Site (S_ID INTEGER, Name VARCHAR(50), Url VARCHAR(75));";
-            string account = "CREATE TABLE Account (SiteUrl VARCHAR(75), UserName VARCHAR(30), Email VARCHAR(75), Password VARCHAR(50), 'Two-Step' BOOLEAN);";
+
+            string site = "CREATE TABLE Site (S_ID INTEGER PRIMARY KEY NOT NULL, Name VARCHAR(50), Url VARCHAR(75));";
+            string account = "CREATE TABLE Account (A_ID INTEGER PRIMARY KEY NOT NULL, S_ID INTEGER, UserName VARCHAR(30), Email VARCHAR(75), Password VARCHAR(50), FOREIGN KEY(S_ID) REFERENCES Site(S_ID));";
             string sql = site + account;
 
             SQLiteCommand command = new SQLiteCommand(sql, dbConnection);
@@ -50,15 +47,14 @@ namespace PasswordLocker {
 
         }
 
-        // pressing enter on the textboxes submits the passwords
+        //opens the database
+        public SQLiteConnection openDB() {
+            SQLiteConnection dbConnection;
+            dbConnection = new SQLiteConnection("Data Source=Passwords.sqlite;Version=3;Password=" + DBpass + ";");
+            return dbConnection;
+        }
         
         //Top textbox
-        private void txtSetupPassword_KeyPress(object sender, KeyPressEventArgs e) {
-            if (e.KeyChar == (char)13) {
-                passSubmit.PerformClick();
-            }
-        }
-
         private void txtSetupPassword_TextChanged(object sender, EventArgs e) {
             lbMisMatch.Visible = false;
             txtSetupPassword.BackColor = SystemColors.Window;
@@ -66,12 +62,6 @@ namespace PasswordLocker {
         }
 
         //bottom textbox
-        private void setupPasswordCon_KeyPress(object sender, KeyPressEventArgs e) {
-            if (e.KeyChar == (char)13) {
-                passSubmit.PerformClick();
-            }
-        }
-
         private void txtSetupPasswordCon_TextChanged(object sender, EventArgs e) {
             lbMisMatch.Visible = false;
             txtSetupPassword.BackColor = SystemColors.Window;
@@ -84,13 +74,7 @@ namespace PasswordLocker {
             txtLogin.BackColor = SystemColors.Window;
         }
 
-        private void txtLogin_KeyPress(object sender, KeyPressEventArgs e) {
-            if (e.KeyChar == (char)13) {
-                login.PerformClick();
-            }
-        }
-
-        //submit button for the setup pannle
+      //submit button for the setup pannle
         private void passSubmit_Click(object sender, EventArgs e) {
             if (txtSetupPassword.Text == txtSetupPasswordCon.Text) {
                 DBpass = txtSetupPassword.Text;
@@ -98,8 +82,7 @@ namespace PasswordLocker {
                 string hash = BCr.HashPassword(DBpass, BCr.GenerateSalt());
 
                 File.WriteAllText("user.pl", hash);
-
-                pnlLogin.Visible = false;
+  
                 pnlLogin.Visible = true;
                 pnlLogin.Dock = DockStyle.Fill;
 
@@ -115,6 +98,26 @@ namespace PasswordLocker {
             }
         }
 
+        //logs onto the program
+        private void login_Click(object sender, EventArgs e) {
+            string hash = File.ReadAllText("user.pl");
+            DBpass = txtLogin.Text;
+            if (BCr.Verify(DBpass, hash)) {
+
+                this.AcceptButton = null;
+                this.MaximumSize = pnlMain.Size;
+                this.Size = pnlMain.Size;
+                pnlMain.Visible = true;
+                pnlMain.Dock = DockStyle.Fill;
+
+                populateGrid();
+
+            } else {
+                lbPassInc.Visible = true;
+                txtLogin.BackColor = Color.DarkRed;
+            }
+        }
+
         //shows the passwords while the mouse is down
         private void showPass_MouseDown(object sender, MouseEventArgs e) {
             txtSetupPassword.UseSystemPasswordChar = false;
@@ -126,19 +129,6 @@ namespace PasswordLocker {
             txtSetupPasswordCon.UseSystemPasswordChar = true;
         }
 
-        //logs onto the program
-        private void login_Click(object sender, EventArgs e) {
-            string hash = File.ReadAllText("user.pl");
-            DBpass = txtLogin.Text;
-            if (BCr.Verify(DBpass, hash)) {
-                System.Console.Write("worked");
-                test();
-            } else {
-                lbPassInc.Visible = true;
-                txtLogin.BackColor = Color.DarkRed;
-            }
-        }
-
         private void showLogonPass_MouseDown(object sender, MouseEventArgs e) {
             txtLogin.UseSystemPasswordChar = false;
         }
@@ -147,30 +137,48 @@ namespace PasswordLocker {
             txtLogin.UseSystemPasswordChar = true;
         }
 
-        private void test() {
-            SQLiteConnection dbConnection;
+        //adds an site to the database
+        private void addNewSite_Click(object sender, EventArgs e) {
+            AddSite addSite = new AddSite();
+            addSite.StartPosition = FormStartPosition.Manual;
+            addSite.Location = this.Location;
+            addSite.ShowDialog();
+        }
 
-            dbConnection = new SQLiteConnection("Data Source=Passwords.sqlite;Version=3;Password=" + DBpass + ";");
+        //adds an Account to the database
+        private void btnNew_Click(object sender, EventArgs e) {
+            AddAccount addAccount= new AddAccount();
+            addAccount.StartPosition = FormStartPosition.Manual;
+            addAccount.Location = this.Location;
+            addAccount.ShowDialog();
+        }
 
+        public void populateGrid() {
+            DataTable dataSource = new DataTable();
+            SQLiteConnection dbconnection = openDB();
+            dbconnection.Open();
 
-            dbConnection.Open();
-            string sql = "INSERT INTO Site VALUES (1, 'test', 'www.test.com')";
+            string sqlSite = "SELECT * FROM Account;";
 
-            SQLiteCommand command = new SQLiteCommand(sql, dbConnection);
-
-            command.ExecuteNonQuery();
-
-            sql = "SELECT * FROM Site";
-
-            command = new SQLiteCommand(sql, dbConnection);
+            SQLiteCommand command = new SQLiteCommand(sqlSite, dbconnection);
 
             SQLiteDataReader reader = command.ExecuteReader();
-            while(reader.Read()) {
-                Console.WriteLine("ID " + reader["S_ID"] + "\tName " + reader["Name"] + "\tUrl " + reader["Url"]);
-            }
 
-            dbConnection.Close();
+            dataSource.Load(reader);
+
+            dbconnection.Close();
+
+            grid.DataSource = dataSource;
+
+            grid.Columns[0].Visible = false;
+            grid.Refresh();
         }
+
+        private void PasswordLocker_Activated(object sender, EventArgs e) {
+            populateGrid();
+        }
+
+        
     }  
 
 }

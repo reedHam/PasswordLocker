@@ -26,6 +26,7 @@
             this.components = new System.ComponentModel.Container();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.pnlSetup = new System.Windows.Forms.Panel();
+            this.label6 = new System.Windows.Forms.Label();
             this.showPass = new System.Windows.Forms.Button();
             this.lbMisMatch = new System.Windows.Forms.Label();
             this.passSubmit = new System.Windows.Forms.Button();
@@ -35,15 +36,21 @@
             this.txtSetupPasswordCon = new System.Windows.Forms.TextBox();
             this.txtSetupPassword = new System.Windows.Forms.TextBox();
             this.pnlLogin = new System.Windows.Forms.Panel();
+            this.showLogonPass = new System.Windows.Forms.Button();
             this.lbPassInc = new System.Windows.Forms.Label();
             this.login = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.txtLogin = new System.Windows.Forms.TextBox();
-            this.showLogonPass = new System.Windows.Forms.Button();
-            this.label6 = new System.Windows.Forms.Label();
+            this.pnlMain = new System.Windows.Forms.Panel();
+            this.addNewSite = new System.Windows.Forms.Button();
+            this.btnNew = new System.Windows.Forms.Button();
+            this.grid = new System.Windows.Forms.DataGridView();
+            this.label7 = new System.Windows.Forms.Label();
             this.pnlSetup.SuspendLayout();
             this.pnlLogin.SuspendLayout();
+            this.pnlMain.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             this.SuspendLayout();
             // 
             // contextMenuStrip1
@@ -67,6 +74,16 @@
             this.pnlSetup.Size = new System.Drawing.Size(440, 368);
             this.pnlSetup.TabIndex = 1;
             this.pnlSetup.Visible = false;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(50, 33);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(329, 24);
+            this.label6.TabIndex = 8;
+            this.label6.Text = "to use to access your password locker";
             // 
             // showPass
             // 
@@ -138,7 +155,6 @@
             this.txtSetupPasswordCon.TabIndex = 1;
             this.txtSetupPasswordCon.UseSystemPasswordChar = true;
             this.txtSetupPasswordCon.TextChanged += new System.EventHandler(this.txtSetupPasswordCon_TextChanged);
-            this.txtSetupPasswordCon.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.setupPasswordCon_KeyPress);
             // 
             // txtSetupPassword
             // 
@@ -149,7 +165,6 @@
             this.txtSetupPassword.TabIndex = 0;
             this.txtSetupPassword.UseSystemPasswordChar = true;
             this.txtSetupPassword.TextChanged += new System.EventHandler(this.txtSetupPassword_TextChanged);
-            this.txtSetupPassword.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSetupPassword_KeyPress);
             // 
             // pnlLogin
             // 
@@ -164,6 +179,17 @@
             this.pnlLogin.Size = new System.Drawing.Size(462, 368);
             this.pnlLogin.TabIndex = 2;
             this.pnlLogin.Visible = false;
+            // 
+            // showLogonPass
+            // 
+            this.showLogonPass.Location = new System.Drawing.Point(292, 100);
+            this.showLogonPass.Name = "showLogonPass";
+            this.showLogonPass.Size = new System.Drawing.Size(114, 23);
+            this.showLogonPass.TabIndex = 8;
+            this.showLogonPass.Text = "Show Passwords";
+            this.showLogonPass.UseVisualStyleBackColor = true;
+            this.showLogonPass.MouseDown += new System.Windows.Forms.MouseEventHandler(this.showLogonPass_MouseDown);
+            this.showLogonPass.MouseUp += new System.Windows.Forms.MouseEventHandler(this.showLogonPass_MouseUp);
             // 
             // lbPassInc
             // 
@@ -216,42 +242,75 @@
             this.txtLogin.TabIndex = 8;
             this.txtLogin.UseSystemPasswordChar = true;
             this.txtLogin.TextChanged += new System.EventHandler(this.txtLogin_TextChanged);
-            this.txtLogin.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtLogin_KeyPress);
             // 
-            // showLogonPass
+            // pnlMain
             // 
-            this.showLogonPass.Location = new System.Drawing.Point(292, 100);
-            this.showLogonPass.Name = "showLogonPass";
-            this.showLogonPass.Size = new System.Drawing.Size(114, 23);
-            this.showLogonPass.TabIndex = 8;
-            this.showLogonPass.Text = "Show Passwords";
-            this.showLogonPass.UseVisualStyleBackColor = true;
-            this.showLogonPass.MouseDown += new System.Windows.Forms.MouseEventHandler(this.showLogonPass_MouseDown);
-            this.showLogonPass.MouseUp += new System.Windows.Forms.MouseEventHandler(this.showLogonPass_MouseUp);
+            this.pnlMain.Controls.Add(this.addNewSite);
+            this.pnlMain.Controls.Add(this.label7);
+            this.pnlMain.Controls.Add(this.btnNew);
+            this.pnlMain.Controls.Add(this.grid);
+            this.pnlMain.Location = new System.Drawing.Point(926, 13);
+            this.pnlMain.Name = "pnlMain";
+            this.pnlMain.Size = new System.Drawing.Size(976, 525);
+            this.pnlMain.TabIndex = 3;
             // 
-            // label6
+            // addNewSite
             // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(50, 33);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(329, 24);
-            this.label6.TabIndex = 8;
-            this.label6.Text = "to use to access your password locker";
+            this.addNewSite.Location = new System.Drawing.Point(718, 32);
+            this.addNewSite.Name = "addNewSite";
+            this.addNewSite.Size = new System.Drawing.Size(111, 23);
+            this.addNewSite.TabIndex = 4;
+            this.addNewSite.Text = "Add new site";
+            this.addNewSite.UseVisualStyleBackColor = true;
+            this.addNewSite.Click += new System.EventHandler(this.addNewSite_Click);
+            // 
+            // btnNew
+            // 
+            this.btnNew.Location = new System.Drawing.Point(835, 32);
+            this.btnNew.Name = "btnNew";
+            this.btnNew.Size = new System.Drawing.Size(111, 23);
+            this.btnNew.TabIndex = 1;
+            this.btnNew.Text = "Add new account";
+            this.btnNew.UseVisualStyleBackColor = true;
+            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
+            // 
+            // grid
+            // 
+            this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid.Location = new System.Drawing.Point(12, 63);
+            this.grid.MultiSelect = false;
+            this.grid.Name = "grid";
+            this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid.Size = new System.Drawing.Size(934, 416);
+            this.grid.TabIndex = 0;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(9, 21);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(80, 13);
+            this.label7.TabIndex = 3;
+            this.label7.Text = "Search by URL";
             // 
             // PasswordLocker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(2078, 552);
+            this.ClientSize = new System.Drawing.Size(1970, 552);
+            this.Controls.Add(this.pnlMain);
             this.Controls.Add(this.pnlLogin);
             this.Controls.Add(this.pnlSetup);
             this.Name = "PasswordLocker";
             this.Text = "Form1";
+            this.Activated += new System.EventHandler(this.PasswordLocker_Activated);
             this.pnlSetup.ResumeLayout(false);
             this.pnlSetup.PerformLayout();
             this.pnlLogin.ResumeLayout(false);
             this.pnlLogin.PerformLayout();
+            this.pnlMain.ResumeLayout(false);
+            this.pnlMain.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -275,6 +334,11 @@
         private System.Windows.Forms.Label lbPassInc;
         private System.Windows.Forms.Button showLogonPass;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Panel pnlMain;
+        private System.Windows.Forms.Button btnNew;
+        private System.Windows.Forms.DataGridView grid;
+        private System.Windows.Forms.Button addNewSite;
+        private System.Windows.Forms.Label label7;
     }
 }
 
